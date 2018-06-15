@@ -1,0 +1,4 @@
+---
+imagen: "eboraas/apache" # Nombre de la imagen que queremos usar para crear el contenedor 
+etiqueta: "latest" #etiqueta de la imagen, normalmente hace referencia a la versión
+
