@@ -1,0 +1,34 @@
+- name: Instalar dependencias
+  apt:
+    name: python-docker
+
+- file:
+    path: /tmp/web
+    state: directory
+    mode: 0755
+
+# aqui se crea el html de ejemplo con un template y se guarda en /tmp/web/index.html
+- name: copiar html
+  template:
+    src: main.html.j2
+    dest: /tmp/web/index.html
+
+- name: Descargar imagen {{ imagen }}
+# descargamos la imagen
+  docker_image:
+    name: "{{ imagen }}"
+    tag: "{{ etiqueta }}"
+
+
+# rrancar contenedor con la imagen
+
+- name: Arrancar contenedor con la imagen base descargada.
+  docker_container:
+    name: apache # Nombre identificativo para el contenedor
+    image: "{{ imagen }}:{{ etiqueta }}" # Nombre de la imagen y su etiqueta
+    ports:
+      - "81:80" # <puerto-local>:<puerto-contenedor>
+      - "444:443"
+    volumes:
+      - /tmp/web/:/var/www/html/ #<directorio-local>:<directorio-contenedor>
+

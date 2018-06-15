@@ -1,0 +1,4 @@
+- hosts: practica
+  roles:
+    - instalacion-programas
+  become: yes

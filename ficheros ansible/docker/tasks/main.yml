@@ -1,0 +1,69 @@
+  #añadimos la key a Debian
+    - name: Añadiendo Docker apt key Debian
+      apt_key:
+        url: https://download.docker.com/linux/debian/gpg
+        id: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
+        state: present
+      when: ansible_os_family == "Debian"
+      register: add_repository_key
+      ignore_errors: true
+
+    - name: Asegurando de que curl esté presente Debian
+      package: name=curl state=present
+      when: add_repository_key is failed and ansible_os_family == "Debian"
+
+#instalamos docker Debian
+    - name: Instalando docker 
+      package: # indicamos que usamos el módulo cyum
+        name: docker # nombre del paquete a instalar
+        state: present
+      become: true
+
+  # Comprobamos si existe el grupo docker.
+    - name: Comprobando si el grupo docker existe
+      shell: cat /etc/group | grep docker
+      register: result
+      become: true
+
+  # si no existe el grupo docker lo creamos
+    - name: Creando grupo docker
+      shell: sudo groupadd docker
+      when: result is failed
+      become: true
+
+  #docker compose
+    - name: Añadiendo Docker-compose.
+      shell: "curl -L https://github.com/docker/compose/releases/download/1.21.0/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose"
+      args:
+        warn: no
+
+  #añadimos permisos para docker-compose
+    - name: Añadiendo permisos para docker-compose
+      shell: "chmod +x /usr/local/bin/docker-compose"
+      args:
+        warn: no
+
+  #Arrancamos daemon docker
+    - service:
+        name: docker
+        state: started
+
+  #comprobar procesos docker
+    - name: Comprobando procesos docker
+      shell: docker ps -a
+      register: estado
+      become: true
+
+
+    - name: Añadiendo Docker apt key Debian
+      shell: "curl -sSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -"
+      args:
+        warn: no
+      when: add_repository_key is failed and ansible_os_family == "Debian"
+
+  #añadimos el repositorio de docker version stretch para Debian
+    - apt_repository: 
+        repo: deb [arch=amd64] https://download.docker.com/linux/debian {{ansible_lsb.codename}} stable
+        state: present
+      when: ansible_distribution == "Debian" #cuando la distribucion sea debian
+      become: true
