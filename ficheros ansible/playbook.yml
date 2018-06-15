@@ -1,0 +1,13 @@
+- hosts: practica
+ 
+# indicar zona de ips
+  roles:
+    - docker
+  become: yes
+
+#necesario para lanzar comandos root como apt(para poder usar sudo)
+
+#lanzar rol de intalacion de docker
+
+  
+

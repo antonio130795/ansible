@@ -1,0 +1,9 @@
+- name: Instalar nmap.
+  apt: #indicamos modulo
+    name: nmap #nombre paquete a instalar
+    state: present
+
+- name: Instalar tree.
+  apt: #indicamos modulo
+    name: tree #nombre paquete a instalar
+    state: present

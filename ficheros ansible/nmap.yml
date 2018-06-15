@@ -1,0 +1,17 @@
+- hosts: practica
+ 
+# indicar zona de ips
+
+  become: yes
+
+#necesario para lanzar comandos root como apt(para poder usar sudo)
+
+  tasks:
+
+#empieza tareas
+
+    - name: Instalar nmap.
+      apt: #indicamos modulo
+        name: nmap #nombre paquete a instalar
+        state: present
+
